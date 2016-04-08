@@ -6,7 +6,7 @@
 // 'starter.controllers' is found in controllers.js
 
 //Drawer Change
-angular.module('starter', ['ionic.contrib.drawer', 'ionic', 'starter.controllers'])
+angular.module('starter', ['ionic.contrib.drawer', 'ionic','ionic.service.core', 'starter.controllers'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
