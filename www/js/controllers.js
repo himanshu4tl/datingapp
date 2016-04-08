@@ -1,6 +1,6 @@
-angular.module('starter.controllers', [])
+angular.module('starter.controllers', ['ngCordovaOauth'])
 
-.controller('AppCtrl', function($scope, $ionicModal, $timeout) {
+.controller('AppCtrl', function($scope, $ionicModal, $timeout,$cordovaOauth,$http) {
   // Form data for the login modal
   $scope.loginData = {};
 
@@ -31,6 +31,43 @@ angular.module('starter.controllers', [])
       $scope.closeLogin();
     }, 1000);
   };
+
+  $scope.facebookLogin = function() {
+        $cordovaOauth.facebook("1037460829623875", ["email"], {"auth_type": "rerequest"})
+        .then(function(result) {
+            console.log(JSON.stringify(result));
+            alert(JSON.stringify(result));
+
+      $http.get("https://graph.facebook.com/v2.2/me", {
+        params: {
+          access_token: result.access_token,
+           fields: "name,gender,location,picture",
+            format: "json" 
+          }})
+      .then(function(result) {
+
+        var name = result.data.name;
+        var gender = result.data.gender;
+        var picture = result.data.picture;
+
+        var html = '<table id="table" data-role="table" data-mode="column" class="ui-responsive"><thead><tr><th>Field</th><th>Info</th></tr></thead><tbody>';
+        html = html + "<tr><td>" + "Name" + "</td><td>" + name + "</td></tr>";
+        html = html + "<tr><td>" + "Gender" + "</td><td>" + gender + "</td></tr>";
+        html = html + "<tr><td>" + "Picture" + "</td><td><img src='" + picture.data.url + "' /></td></tr>";
+
+        html = html + "</tbody></table>";
+
+        document.getElementById("listTable").innerHTML = html;
+       
+        }, function(error) {
+            alert("Error: " + error);
+        });
+            
+            }, function(error) {
+            console.log(JSON.stringify(error));
+        });
+    };
+
 })
 
 .controller('PlaylistsCtrl', function($scope) {
